@@ -42,12 +42,12 @@ form label{display:block;font-weight:600;margin:12px 0 4px;font-size:15px}input,
 <label for="reason" data-i="fReason"></label><select id="reason" name="reason"></select>
 <div class="row"><div><label for="day" data-i="fDay"></label><input id="day" name="day" type="date"></div><div><label for="time" data-i="fTime"></label><select id="time" name="time"></select></div></div>
 <label for="notes" data-i="fNotes"></label><textarea id="notes" name="notes" rows="2" maxlength="300"></textarea>
-<label class="consent"><input type="checkbox" id="sms" name="smsConsent"><span id="consentText"></span></label>
+<label class="consent" id="smsWrap"><input type="checkbox" id="sms" name="smsConsent"><span id="consentText"></span></label>
 <p class="note" data-i="privacy"></p>
 <button class="btn solid" type="submit" data-i="send"></button><div class="msg" id="msg" role="status"></div></form></div></section>
 <section><h2 data-i="whyH"></h2><div class="grid"><div class="card"><h3 data-i="w1"></h3><p data-i="w1d"></p></div><div class="card"><h3 data-i="w2"></h3><p data-i="w2d"></p></div><div class="card"><h3 data-i="w3"></h3><p data-i="w3d"></p></div></div></section>
 </main>
-<footer><div class="wrap"><p data-i="disc"></p><p data-i="trans"></p><p><span data-cfg="agency"></span> · <span data-cfg="license"></span> · Atwater · Livingston · Merced County, CA</p></div></footer>
+<footer><div class="wrap"><p data-i="disc"></p><p data-i="trans"></p><p><span data-cfg="agency"></span> · <span data-cfg="license"></span> · Atwater · Livingston · Merced County, CA</p><p><a href="/privacy.html" data-i="pp"></a> · <a href="/terms.html" data-i="tos"></a></p></div></footer>
 <nav class="sticky"><a class="s1" data-tel data-i="sCall"></a><a class="s2" data-sms data-i="sText"></a><a class="s3" href="#form" data-i="sBook"></a></nav>
 <script>
 /* ====================== CONFIG — EDIT THIS BLOCK ONLY ====================== */
@@ -58,7 +58,8 @@ const CONFIG = {
   textPhone: "2095550123",                   // number that receives texts [PLACEHOLDER]
   license:   "CA License # [0000000]",       // CA DOI license number [PLACEHOLDER]
   certId:    "[CERT ID]",                    // Covered California agent certification [PLACEHOLDER]
-  bookingLink: "",                           // optional Calendly/Google booking URL
+  bookingLink: "",
+  SMS_ENABLED: false,                        // keep false until Twilio is purchased/registered — hides SMS consent box                           // optional Calendly/Google booking URL
   oeStart: "2026-11-01", fullYearBy: "2026-12-31", oeEnd: "2027-01-31" // verified: coveredca.com press release
 };
 /* ========================================================================== */
@@ -70,10 +71,10 @@ bringH:"Qué traer a la cita",bring:["Identificación con foto","Ingresos aproxi
 formH:"Pida su cita",fName:"Nombre",fPhone:"Teléfono celular",fReason:"¿En qué le ayudo?",reasons:["Inscribirme por primera vez","Renovar o comparar mi plan","Mi recibo subió","Perdí mi seguro / Medi-Cal","Otra pregunta"],fDay:"Día preferido",fTime:"Hora",times:["Mañana (9–12)","Tarde (12–4)","Después (4–7)"],fNotes:"Nota (opcional)",send:"Enviar — le llamamos hoy",
 consent:n=>`Acepto recibir mensajes de texto de ${n} sobre mi cita y mi seguro al número que di. Frecuencia varía. Pueden aplicar tarifas de mensajes y datos. Responda STOP para cancelar o HELP para ayuda. Aceptar no es requisito para recibir servicio.`,
 privacy:"🔒 Privacidad: aquí NO pedimos número de Seguro Social, estatus migratorio, ingresos exactos ni información de salud. Solo su nombre y teléfono para llamarle. No vendemos ni compartimos su número.",
-ok:"¡Gracias! Le llamaremos hoy. Guardamos su consentimiento con fecha y hora.",err:"Revise su nombre y un teléfono de 10 dígitos.",fail:"No se pudo enviar. Por favor llámenos.",
+ok:"¡Gracias! Le llamaremos hoy. Recibimos su solicitud.",err:"Revise su nombre y un teléfono de 10 dígitos.",fail:"No se pudo enviar. Por favor llámenos.",
 whyH:"Por qué trabajar conmigo",w1:"En su idioma",w1d:"Español, English y ਪੰਜਾਬੀ. Le explico todo con calma.",w2:"Sin costo",w2d:"Los agentes certificados cobran de la aseguradora, no de usted. El precio del plan es el mismo.",w3:"Todo el año",w3d:"Le recuerdo antes de renovar y le ayudo si cambia su trabajo o familia.",
 banner:(e,f)=>`Inscripción abierta: hasta el ${e}. Inscríbase antes del ${f} para tener cobertura desde el 1 de enero.`,bannerOff:"Inscripción abierta cerrada. Puede calificar por un evento de vida (trabajo, mudanza, bebé).",
-disc:"Agente de seguros independiente certificado para vender planes de Covered California. Este sitio NO es de Covered California ni del gobierno.",trans:"Traducciones de demostración — requieren revisión por un hablante nativo.",sCall:"📞 Llamar",sText:"💬 Texto",sBook:"📅 Cita"},
+disc:"Agente de seguros independiente certificado para vender planes de Covered California. Este sitio NO es de Covered California ni del gobierno.",trans:"Traducciones de demostración — requieren revisión por un hablante nativo.",sCall:"📞 Llamar",sText:"💬 Texto",sBook:"📅 Cita",pp:"Privacidad",tos:"Términos"},
 en:{cert:"Certified Insurance Agent · Covered California",pill:"Free help · Atwater & Livingston",h1:"Health insurance without the confusion, in your language",sub:"I help you compare Covered California plans and check if you qualify for help paying. My help costs you nothing.",call:"📞 Call now",book:"Request a time",sameDay:"Same-day callback (Mon–Sat).",
 shockH:"Got a higher bill?",shockP:"Extra federal help ended in 2025. For 2027, California expanded its own help for many households up to 200% of poverty level, and some people can get $0 Silver plans. We compare plans free before you renew.",shockBtn:"Compare my plan free",
 explH:"Key words, made simple",t1:"Premium",d1:"What you pay each month to have insurance, even if you don't see a doctor.",t2:"Deductible",d2:"What you pay first each year before insurance pays more.",t3:"Copay",d3:"A set price per visit or prescription, e.g. $35 to see a doctor.",t4:"Subsidy",d4:"Government help that lowers your monthly premium based on income and household.",
@@ -81,10 +82,10 @@ bringH:"What to bring",bring:["Photo ID","Estimated 2027 household income (pay s
 formH:"Request your appointment",fName:"Name",fPhone:"Mobile phone",fReason:"How can I help?",reasons:["Enroll for the first time","Renew or compare my plan","My bill went up","Lost coverage / Medi-Cal","Other question"],fDay:"Preferred day",fTime:"Time",times:["Morning (9–12)","Afternoon (12–4)","Later (4–7)"],fNotes:"Note (optional)",send:"Send — we call you today",
 consent:n=>`I agree to receive text messages from ${n} about my appointment and coverage at the number provided. Msg frequency varies. Msg & data rates may apply. Reply STOP to opt out, HELP for help. Consent is not a condition of service.`,
 privacy:"🔒 Privacy: we do NOT ask for Social Security numbers, immigration status, exact income or health information here. Only your name and phone so we can call. We never sell or share your number.",
-ok:"Thank you! We'll call you today. Your consent was saved with date and time.",err:"Please check your name and a 10-digit phone.",fail:"Couldn't send. Please call us.",
+ok:"Thank you! We'll call you today. We received your request.",err:"Please check your name and a 10-digit phone.",fail:"Couldn't send. Please call us.",
 whyH:"Why work with me",w1:"Your language",w1d:"Español, English and ਪੰਜਾਬੀ. I explain everything patiently.",w2:"No cost",w2d:"Certified agents are paid by the insurer, not you. The plan price is the same.",w3:"All year",w3d:"I remind you before renewal and help when your job or family changes.",
 banner:(e,f)=>`Open enrollment: through ${e}. Enroll by ${f} for coverage starting Jan 1.`,bannerOff:"Open enrollment closed. You may qualify after a life event (job, move, baby).",
-disc:"Independent insurance agent certified to sell Covered California plans. This site is NOT run by Covered California or the government.",trans:"Demo translations — need native-speaker review.",sCall:"📞 Call",sText:"💬 Text",sBook:"📅 Book"},
+disc:"Independent insurance agent certified to sell Covered California plans. This site is NOT run by Covered California or the government.",trans:"Demo translations — need native-speaker review.",sCall:"📞 Call",sText:"💬 Text",sBook:"📅 Book",pp:"Privacy",tos:"Terms"},
 pa:{cert:"ਸਰਟੀਫਾਈਡ ਬੀਮਾ ਏਜੰਟ · Covered California",pill:"ਮੁਫ਼ਤ ਮਦਦ · Atwater ਅਤੇ Livingston",h1:"ਸਿਹਤ ਬੀਮਾ ਆਸਾਨ, ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ",sub:"ਮੈਂ Covered California ਪਲਾਨਾਂ ਦੀ ਤੁਲਨਾ ਕਰਨ ਅਤੇ ਭੁਗਤਾਨ ਵਿੱਚ ਮਦਦ ਲਈ ਯੋਗਤਾ ਦੇਖਣ ਵਿੱਚ ਮਦਦ ਕਰਦੀ ਹਾਂ। ਮੇਰੀ ਮਦਦ ਮੁਫ਼ਤ ਹੈ।",call:"📞 ਹੁਣੇ ਕਾਲ ਕਰੋ",book:"ਸਮਾਂ ਮੰਗੋ",sameDay:"ਉਸੇ ਦਿਨ ਵਾਪਸ ਕਾਲ (ਸੋਮ–ਸ਼ਨੀ)।",
 shockH:"ਕੀ ਤੁਹਾਡਾ ਬਿੱਲ ਵੱਧ ਆਇਆ?",shockP:"ਵਾਧੂ ਫੈਡਰਲ ਮਦਦ 2025 ਵਿੱਚ ਖਤਮ ਹੋ ਗਈ। 2027 ਲਈ California ਨੇ ਗਰੀਬੀ ਪੱਧਰ ਦੇ 200% ਤੱਕ ਆਮਦਨ ਵਾਲੇ ਪਰਿਵਾਰਾਂ ਲਈ ਆਪਣੀ ਮਦਦ ਵਧਾਈ ਹੈ, ਅਤੇ ਕੁਝ ਲੋਕਾਂ ਲਈ $0 Silver ਪਲਾਨ ਹਨ। ਰੀਨਿਊ ਤੋਂ ਪਹਿਲਾਂ ਅਸੀਂ ਮੁਫ਼ਤ ਤੁਲਨਾ ਕਰਦੇ ਹਾਂ।",shockBtn:"ਮੁਫ਼ਤ ਤੁਲਨਾ ਕਰੋ",
 explH:"ਮੁੱਖ ਸ਼ਬਦ, ਸੌਖੇ ਤਰੀਕੇ ਨਾਲ",t1:"ਪ੍ਰੀਮੀਅਮ",d1:"ਬੀਮੇ ਲਈ ਹਰ ਮਹੀਨੇ ਦਿੱਤੀ ਰਕਮ।",t2:"ਡਿਡਕਟੀਬਲ",d2:"ਸਾਲ ਵਿੱਚ ਪਹਿਲਾਂ ਤੁਸੀਂ ਜੋ ਭਰਦੇ ਹੋ, ਫਿਰ ਬੀਮਾ ਵੱਧ ਭਰਦਾ ਹੈ।",t3:"ਕੋਪੇ",d3:"ਹਰ ਮੁਲਾਕਾਤ ਜਾਂ ਦਵਾਈ ਦੀ ਤੈਅ ਕੀਮਤ, ਜਿਵੇਂ $35।",t4:"ਸਬਸਿਡੀ",d4:"ਸਰਕਾਰੀ ਮਦਦ ਜੋ ਆਮਦਨ ਅਤੇ ਪਰਿਵਾਰ ਮੁਤਾਬਕ ਮਹੀਨਾਵਾਰ ਪ੍ਰੀਮੀਅਮ ਘਟਾਉਂਦੀ ਹੈ।",
@@ -92,10 +93,10 @@ bringH:"ਮੁਲਾਕਾਤ ਲਈ ਕੀ ਲਿਆਉਣਾ ਹੈ",bring:["�
 formH:"ਮੁਲਾਕਾਤ ਮੰਗੋ",fName:"ਨਾਮ",fPhone:"ਮੋਬਾਈਲ ਫ਼ੋਨ",fReason:"ਮੈਂ ਕਿਵੇਂ ਮਦਦ ਕਰਾਂ?",reasons:["ਪਹਿਲੀ ਵਾਰ ਦਾਖਲਾ","ਪਲਾਨ ਰੀਨਿਊ ਜਾਂ ਤੁਲਨਾ","ਮੇਰਾ ਬਿੱਲ ਵਧ ਗਿਆ","ਬੀਮਾ / Medi-Cal ਖਤਮ ਹੋ ਗਿਆ","ਹੋਰ ਸਵਾਲ"],fDay:"ਪਸੰਦੀਦਾ ਦਿਨ",fTime:"ਸਮਾਂ",times:["ਸਵੇਰ (9–12)","ਦੁਪਹਿਰ (12–4)","ਸ਼ਾਮ (4–7)"],fNotes:"ਨੋਟ (ਵਿਕਲਪਿਕ)",send:"ਭੇਜੋ — ਅਸੀਂ ਅੱਜ ਕਾਲ ਕਰਾਂਗੇ",
 consent:n=>`ਮੈਂ ${n} ਤੋਂ ਆਪਣੀ ਮੁਲਾਕਾਤ ਅਤੇ ਬੀਮੇ ਬਾਰੇ ਟੈਕਸਟ ਸੁਨੇਹੇ ਲੈਣ ਲਈ ਸਹਿਮਤ ਹਾਂ। ਸੁਨੇਹਿਆਂ ਦੀ ਗਿਣਤੀ ਬਦਲ ਸਕਦੀ ਹੈ। ਸੁਨੇਹਾ ਅਤੇ ਡਾਟਾ ਖਰਚੇ ਲੱਗ ਸਕਦੇ ਹਨ। ਬੰਦ ਕਰਨ ਲਈ STOP, ਮਦਦ ਲਈ HELP ਭੇਜੋ। ਸੇਵਾ ਲਈ ਸਹਿਮਤੀ ਜ਼ਰੂਰੀ ਨਹੀਂ।`,
 privacy:"🔒 ਪਰਦੇਦਾਰੀ: ਇੱਥੇ ਅਸੀਂ Social Security ਨੰਬਰ, ਇਮੀਗ੍ਰੇਸ਼ਨ ਸਥਿਤੀ, ਸਹੀ ਆਮਦਨ ਜਾਂ ਸਿਹਤ ਜਾਣਕਾਰੀ ਨਹੀਂ ਮੰਗਦੇ। ਸਿਰਫ਼ ਨਾਮ ਅਤੇ ਫ਼ੋਨ। ਅਸੀਂ ਤੁਹਾਡਾ ਨੰਬਰ ਨਾ ਵੇਚਦੇ ਹਾਂ ਨਾ ਸਾਂਝਾ ਕਰਦੇ ਹਾਂ।",
-ok:"ਧੰਨਵਾਦ! ਅਸੀਂ ਅੱਜ ਕਾਲ ਕਰਾਂਗੇ। ਤੁਹਾਡੀ ਸਹਿਮਤੀ ਮਿਤੀ ਅਤੇ ਸਮੇਂ ਨਾਲ ਸੰਭਾਲੀ ਗਈ।",err:"ਨਾਮ ਅਤੇ 10 ਅੰਕਾਂ ਦਾ ਫ਼ੋਨ ਚੈੱਕ ਕਰੋ।",fail:"ਭੇਜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਕਾਲ ਕਰੋ।",
+ok:"ਧੰਨਵਾਦ! ਅਸੀਂ ਅੱਜ ਕਾਲ ਕਰਾਂਗੇ। ਤੁਹਾਡੀ ਬੇਨਤੀ ਮਿਲ ਗਈ।",err:"ਨਾਮ ਅਤੇ 10 ਅੰਕਾਂ ਦਾ ਫ਼ੋਨ ਚੈੱਕ ਕਰੋ।",fail:"ਭੇਜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਕਾਲ ਕਰੋ।",
 whyH:"ਮੇਰੇ ਨਾਲ ਕਿਉਂ",w1:"ਤੁਹਾਡੀ ਭਾਸ਼ਾ",w1d:"Español, English ਅਤੇ ਪੰਜਾਬੀ।",w2:"ਕੋਈ ਖਰਚਾ ਨਹੀਂ",w2d:"ਸਰਟੀਫਾਈਡ ਏਜੰਟਾਂ ਨੂੰ ਬੀਮਾ ਕੰਪਨੀ ਭੁਗਤਾਨ ਕਰਦੀ ਹੈ, ਤੁਸੀਂ ਨਹੀਂ।",w3:"ਸਾਰਾ ਸਾਲ",w3d:"ਰੀਨਿਊ ਤੋਂ ਪਹਿਲਾਂ ਯਾਦ ਕਰਾਉਂਦੀ ਹਾਂ ਅਤੇ ਬਦਲਾਅ ਵੇਲੇ ਮਦਦ ਕਰਦੀ ਹਾਂ।",
 banner:(e,f)=>`ਓਪਨ ਐਨਰੋਲਮੈਂਟ: ${e} ਤੱਕ। 1 ਜਨਵਰੀ ਤੋਂ ਕਵਰੇਜ ਲਈ ${f} ਤੱਕ ਦਾਖਲਾ ਲਓ।`,bannerOff:"ਓਪਨ ਐਨਰੋਲਮੈਂਟ ਬੰਦ ਹੈ। ਜ਼ਿੰਦਗੀ ਵਿੱਚ ਬਦਲਾਅ (ਨੌਕਰੀ, ਘਰ ਬਦਲਣਾ, ਬੱਚਾ) ਤੋਂ ਬਾਅਦ ਯੋਗ ਹੋ ਸਕਦੇ ਹੋ।",
-disc:"Covered California ਪਲਾਨ ਵੇਚਣ ਲਈ ਸਰਟੀਫਾਈਡ ਸੁਤੰਤਰ ਬੀਮਾ ਏਜੰਟ। ਇਹ ਸਾਈਟ Covered California ਜਾਂ ਸਰਕਾਰ ਦੀ ਨਹੀਂ ਹੈ।",trans:"ਡੈਮੋ ਅਨੁਵਾਦ — ਮੂਲ ਬੋਲਣ ਵਾਲੇ ਤੋਂ ਜਾਂਚ ਦੀ ਲੋੜ।",sCall:"📞 ਕਾਲ",sText:"💬 ਟੈਕਸਟ",sBook:"📅 ਸਮਾਂ"}};
+disc:"Covered California ਪਲਾਨ ਵੇਚਣ ਲਈ ਸਰਟੀਫਾਈਡ ਸੁਤੰਤਰ ਬੀਮਾ ਏਜੰਟ। ਇਹ ਸਾਈਟ Covered California ਜਾਂ ਸਰਕਾਰ ਦੀ ਨਹੀਂ ਹੈ।",trans:"ਡੈਮੋ ਅਨੁਵਾਦ — ਮੂਲ ਬੋਲਣ ਵਾਲੇ ਤੋਂ ਜਾਂਚ ਦੀ ਲੋੜ।",sCall:"📞 ਕਾਲ",sText:"💬 ਟੈਕਸਟ",sBook:"📅 ਸਮਾਂ",pp:"ਪਰਦੇਦਾਰੀ",tos:"ਸ਼ਰਤਾਂ"}};
 const LOC={es:"es-MX",en:"en-US",pa:"pa-IN"},KEY="cca-lead-v1",$=s=>document.querySelector(s);
 let lang=localStorage.getItem("cca-lang")||"es";
 const fmt=(d,l)=>new Date(d+"T12:00:00").toLocaleDateString(LOC[l],{month:"long",day:"numeric",year:"numeric"});
@@ -107,7 +108,7 @@ function render(){const t=T[lang];document.documentElement.lang=lang==="pa"?"pa"
  $("#bring").innerHTML="";t.bring.forEach(x=>{const li=document.createElement("li");li.textContent=x;$("#bring").appendChild(li)});
  const fill=(sel,arr)=>{const cur=sel.selectedIndex;sel.innerHTML="";arr.forEach((x,i)=>sel.add(new Option(x,String(i))));if(cur>=0)sel.selectedIndex=cur};
  fill($("#reason"),t.reasons);fill($("#time"),t.times);
- $("#consentText").textContent=t.consent(CONFIG.agency);
+ if($("#consentText"))$("#consentText").textContent=t.consent(CONFIG.agency);
  const today=new Date().toISOString().slice(0,10);
  $("#oeBanner").textContent=today<=CONFIG.oeEnd&&today>=CONFIG.oeStart?t.banner(fmt(CONFIG.oeEnd,lang),fmt(CONFIG.fullYearBy,lang)):t.bannerOff;
  document.title=t.cert+" · Atwater & Livingston"}
@@ -122,8 +123,9 @@ f.addEventListener("input",()=>{const s={};fields.forEach(k=>s[k]=f[k].value);lo
 f.addEventListener("submit",async e=>{e.preventDefault();const m=$("#msg"),t=T[lang];m.className="msg";
  const phone=f.phone.value.replace(/\D/g,"");if(!f.name.value.trim()||!(phone.length===10||(phone.length===11&&phone[0]==="1"))){m.textContent=t.err;m.className="msg err";return}
  const body={name:f.name.value,phone,reason:T.en.reasons[f.reason.value],day:f.day.value,time:T.en.times[f.time.value],notes:f.notes.value,website:f.website.value,lang,
-  smsConsent:$("#sms").checked,consentText:$("#sms").checked?$("#consentText").textContent:"",source:"website-lead-form:"+location.hostname};
+  smsConsent:!!($("#sms")&&$("#sms").checked),consentText:$("#sms")&&$("#sms").checked?$("#consentText").textContent:"",source:"website-lead-form:"+location.hostname};
  try{const r=await fetch("/api/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const j=await r.json();
-  if(!j.ok)throw 0;m.textContent=t.ok;m.className="msg ok";localStorage.removeItem(KEY);f.reset();render()}catch{m.textContent=t.fail;m.className="msg err"}});
+  if(!j.ok)throw 0;try{const L=JSON.parse(localStorage.getItem("cca-leads")||"[]");L.unshift({...body,website:undefined,id:Date.now(),at:new Date().toISOString(),done:false});localStorage.setItem("cca-leads",JSON.stringify(L.slice(0,50)))}catch{}m.textContent=t.ok;m.className="msg ok";localStorage.removeItem(KEY);f.reset();render()}catch{m.textContent=t.fail;m.className="msg err"}});
+if(!CONFIG.SMS_ENABLED){$("#smsWrap").remove()}
 render();
 </script></body></html>
